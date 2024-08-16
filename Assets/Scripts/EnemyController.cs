@@ -20,6 +20,7 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
+        CheckHit();
         Vector2 velocity = _rigidbody.velocity;
         Vector2 scale = transform.localScale;
         _isGrounded = CheckGround();
@@ -61,8 +62,11 @@ public class EnemyController : MonoBehaviour
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(
             transform.position + (Vector3)hitBoxPosition,  // Position of the hitbox
-            new Vector3(hitBoxSize.x + 0.1f, hitBoxSize.y, 0)  // Size of the hitbox
-                                                               // The z-axis is irrelevant, so it's 0
+            new Vector3(  // Size of the hitbox
+                hitBoxSize.x + 0.1f,
+                hitBoxSize.y,
+                0  // The z-axis is irrelevant, so it's 0
+            )
         );
 
         Gizmos.color = Color.cyan;
@@ -79,8 +83,10 @@ public class EnemyController : MonoBehaviour
     {
         _collider.enabled = false;
         Collider2D overlapBox = Physics2D.OverlapBox(
-            new Vector2(position.x + direction * (hitBoxSize.x / 2),
-                position.y + (hitBoxSize.y / 2)),
+            new Vector2(
+                position.x + direction * (hitBoxSize.x / 2),
+                position.y + hitBoxSize.y / 2
+            ),
             wallCheckHitBoxSize,
             0,
             tileMask
@@ -90,6 +96,27 @@ public class EnemyController : MonoBehaviour
         if (overlapBox != null)
         {
             mIsMovingLeft = !mIsMovingLeft;
+        }
+    }
+
+    void CheckHit()
+    {
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(
+            transform.position + (Vector3)hitBoxPosition,
+            new Vector3(
+                hitBoxSize.x + 0.1f,
+                hitBoxSize.y,
+                0
+            ),
+            0
+        );
+
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider != null)
+            {
+                
+            }
         }
     }
 }
