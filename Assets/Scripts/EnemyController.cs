@@ -101,6 +101,8 @@ public class EnemyController : MonoBehaviour
 
     void CheckHit()
     {
+        // https://rider-support.jetbrains.com/hc/en-us/community/posts/11634372238098-NonAlloc-in-Unity-is-either-deprecated-or-ineffective
+        // ReSharper disable once Unity.PreferNonAllocApi
         Collider2D[] colliders = Physics2D.OverlapBoxAll(
             transform.position + (Vector3)hitBoxPosition,
             new Vector3(
@@ -111,11 +113,14 @@ public class EnemyController : MonoBehaviour
             0
         );
 
-        foreach (Collider2D collider in colliders)
+        foreach (Collider2D collided in colliders)
         {
-            if (collider != null)
+            if (collided != null)
             {
-                
+                if (collided.CompareTag("Player"))
+                {
+                    PlayerHealth.TakeDamage(50);
+                }
             }
         }
     }
