@@ -92,9 +92,10 @@ public class EnemyController : MonoBehaviour
             tileMask
         );
         _collider.enabled = true;
-
-        if (overlapBox != null)
+        
+        if (overlapBox != null | overlapBox.name != "Ground")
         {
+            print(overlapBox.name);
             mIsMovingLeft = !mIsMovingLeft;
         }
     }
