@@ -119,7 +119,22 @@ public class EnemyController : MonoBehaviour
             {
                 if (collided.CompareTag("Player"))
                 {
-                    PlayerHealth.TakeDamage(50);
+                    Rigidbody2D collidedRb = collided.GetComponent<Rigidbody2D>();
+                    if (collidedRb != null)
+                    {
+                        // If the player is falling
+                        if (collidedRb.velocity.y < -0.2f)
+                        {
+                            Destroy(gameObject);
+                            return;
+                        }
+                    }
+                    
+                    PlayerHealth playerHealth = collided.GetComponent<PlayerHealth>();
+                    if (playerHealth != null)
+                    {
+                        playerHealth.TakeDamage(50);
+                    }
                 }
             }
         }
