@@ -93,7 +93,8 @@ public class EnemyController : MonoBehaviour
         );
         _collider.enabled = true;
         
-        if (overlapBox != null | overlapBox.name != "Ground")
+        // | stands for logical or, which is something completely different from conditional or
+        if (overlapBox != null || overlapBox.name != "Ground")
         {
             print(overlapBox.name);
             mIsMovingLeft = !mIsMovingLeft;
