@@ -23,7 +23,7 @@ public class PlayerController2D : MonoBehaviour
     void Update()
     {
         _moveInput = Input.GetAxis("Horizontal");
-        jumpInput = Input.GetButton("jump");
+        jumpInput = Input.GetButton("Jump");
 
         if (_moveInput < 0)
             faceRight = false;
