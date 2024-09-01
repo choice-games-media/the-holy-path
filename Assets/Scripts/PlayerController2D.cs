@@ -6,18 +6,18 @@ public class PlayerController2D : MonoBehaviour
     public float jumpSpeed = 4f;
     public float groundRadiusCheck = 0.3f;
     public LayerMask layers;
-    Rigidbody2D _rb;
-    float _moveInput;
-    bool _jumpInput;
     private SpriteRenderer _characterSpriteRender;
+    private bool _jumpInput;
+    private float _moveInput;
+    private Rigidbody2D _rb;
 
-    void Awake()
+    private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
         _characterSpriteRender = GetComponent<SpriteRenderer>();
     }
 
-    void Update()
+    private void Update()
     {
         _moveInput = Input.GetAxis("Horizontal");
         _jumpInput = Input.GetButton("Jump");
@@ -45,17 +45,17 @@ public class PlayerController2D : MonoBehaviour
         _rb.velocity = vel;
     }
 
-    bool GroundCheck()
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position, groundRadiusCheck);
+    }
+
+    private bool GroundCheck()
     {
         Collider2D hitCollider = Physics2D.OverlapCircle(
             transform.position,
             groundRadiusCheck,
             layers);
-        return hitCollider != null;
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireSphere(transform.position, groundRadiusCheck);
+        return hitCollider == null;
     }
 }
