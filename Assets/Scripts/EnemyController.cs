@@ -24,9 +24,10 @@ public class EnemyController : MonoBehaviour
         Vector2 velocity = _rigidbody.velocity;
         Vector2 scale = transform.localScale;
         _isGrounded = CheckGround();
+        print(_isGrounded);
 
         if (_isGrounded) // Prevents some weird sprite flip-flopping
-        {
+        {   
             if (mIsMovingLeft)
             {
                 velocity.x = -mSpeed;
@@ -76,7 +77,7 @@ public class EnemyController : MonoBehaviour
             tileMask // Only check certain layers
         );
 
-        return feetHotbox.collider != null; // If the collider touches something, return true
+        return feetHotbox.collider == null; // If the collider touches something, return true
     }
 
     private void CheckWalls(Vector3 position, float direction)
@@ -93,10 +94,12 @@ public class EnemyController : MonoBehaviour
         );
         _collider.enabled = true;
         
-
+        print(overlapBox != null);
+        
         if (overlapBox != null && overlapBox.name != "Ground")
         {
             mIsMovingLeft = !mIsMovingLeft;
+            print("Turning around!");
         }
     }
 
