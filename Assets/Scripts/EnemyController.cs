@@ -49,7 +49,7 @@ public class EnemyController : MonoBehaviour
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(
-            transform.position + (Vector3)hitBoxPosition, // Position of the hitbox
+            transform.position + (Vector3)hitBoxPosition, // Position of the hit box
             new Vector3( // Size of the hitbox
                 hitBoxSize.x + 0.1f,
                 hitBoxSize.y,
@@ -60,7 +60,7 @@ public class EnemyController : MonoBehaviour
         Gizmos.DrawWireCube(
             new Vector2(
                 transform.position.x + transform.localScale.x * (hitBoxSize.x / 2),
-                transform.position.y + hitBoxSize.y
+                transform.position.y
             ),
             wallCheckHitBoxSize
         );
@@ -85,16 +85,19 @@ public class EnemyController : MonoBehaviour
         Collider2D overlapBox = Physics2D.OverlapBox(
             new Vector2(
                 position.x + direction * (hitBoxSize.x / 2),
-                position.y + hitBoxSize.y / 2
+                position.y // Center of the hitbox in y-axis
             ),
             wallCheckHitBoxSize,
             0,
             tileMask
         );
         _collider.enabled = true;
+        
 
-        // | stands for logical or, which is something completely different from conditional or
-        if (overlapBox != null || overlapBox.name != "Ground") mIsMovingLeft = !mIsMovingLeft;
+        if (overlapBox != null && overlapBox.name != "Ground")
+        {
+            mIsMovingLeft = !mIsMovingLeft;
+        }
     }
 
     private void CheckHit()
@@ -112,23 +115,26 @@ public class EnemyController : MonoBehaviour
         );
 
         foreach (Collider2D collided in colliders)
-            if (collided != null)
-                if (collided.CompareTag("Player"))
+        {
+            if (collided != null && collided.CompareTag("Player"))
+            {
+                Rigidbody2D collidedRb = collided.GetComponent<Rigidbody2D>();
+                if (collidedRb != null)
                 {
-                    Rigidbody2D collidedRb = collided.GetComponent<Rigidbody2D>();
-                    if (collidedRb != null)
-                        // If the player is falling
-                        if (collidedRb.velocity.y < -0.2f)
-                        {
-                            Destroy(gameObject);
-                            return;
-                        }
-
-                    PlayerHealth playerHealth = collided.GetComponent<PlayerHealth>();
-                    if (playerHealth != null)
+                    // If the player is falling
+                    if (collidedRb.velocity.y < -0.2f)
                     {
-                        playerHealth.TakeDamage(50);
+                        Destroy(gameObject);
+                        return;
                     }
                 }
+
+                PlayerHealth playerHealth = collided.GetComponent<PlayerHealth>();
+                if (playerHealth != null)
+                {
+                    playerHealth.TakeDamage(50);
+                }
+            }
+        }
     }
 }

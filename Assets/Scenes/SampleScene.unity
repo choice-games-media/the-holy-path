@@ -647,7 +647,7 @@ MonoBehaviour:
     m_Bits: 256
   hitBoxSize: {x: 1, y: 1}
   hitBoxPosition: {x: 0, y: 0}
-  wallCheckHitBoxSize: {x: 0.2, y: 1.5}
+  wallCheckHitBoxSize: {x: 0.2, y: 0.75}
 --- !u!50 &1376710528
 Rigidbody2D:
   serializedVersion: 4
