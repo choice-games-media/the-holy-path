@@ -7,5 +7,6 @@ public class PlayerHealth : MonoBehaviour
     public void TakeDamage(int amount)
     {
         health -= amount;
+        print(health);
     }
 }

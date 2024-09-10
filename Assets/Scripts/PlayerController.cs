@@ -56,6 +56,7 @@ public class PlayerController : MonoBehaviour
             transform.position,
             groundRadiusCheck,
             layers);
-        return hitCollider == null;
+        
+        return hitCollider.CompareTag("Ground");
     }
 }

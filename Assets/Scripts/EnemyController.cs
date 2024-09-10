@@ -11,7 +11,13 @@ public class EnemyController : MonoBehaviour
     private Collider2D _collider;
     private bool _isGrounded;
     private Rigidbody2D _rigidbody;
+    private SpriteRenderer _spriteRenderer;
 
+    private void Awake()
+    {
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+    
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
@@ -24,10 +30,9 @@ public class EnemyController : MonoBehaviour
         Vector2 velocity = _rigidbody.velocity;
         Vector2 scale = transform.localScale;
         _isGrounded = CheckGround();
-        print(_isGrounded);
-
+        _spriteRenderer.flipX = !mIsMovingLeft;
         if (_isGrounded) // Prevents some weird sprite flip-flopping
-        {   
+        {
             if (mIsMovingLeft)
             {
                 velocity.x = -mSpeed;
@@ -94,12 +99,9 @@ public class EnemyController : MonoBehaviour
         );
         _collider.enabled = true;
         
-        print(overlapBox != null);
-        
-        if (overlapBox != null && overlapBox.name != "Ground")
+        if (overlapBox != null && !overlapBox.CompareTag("Ground"))
         {
             mIsMovingLeft = !mIsMovingLeft;
-            print("Turning around!");
         }
     }
 
@@ -119,7 +121,7 @@ public class EnemyController : MonoBehaviour
 
         foreach (Collider2D collided in colliders)
         {
-            if (collided != null && collided.CompareTag("Player"))
+            if (collided.CompareTag("Player"))
             {
                 Rigidbody2D collidedRb = collided.GetComponent<Rigidbody2D>();
                 if (collidedRb != null)
@@ -135,7 +137,7 @@ public class EnemyController : MonoBehaviour
                 PlayerHealth playerHealth = collided.GetComponent<PlayerHealth>();
                 if (playerHealth != null)
                 {
-                    playerHealth.TakeDamage(50);
+                    playerHealth.TakeDamage(1);
                 }
             }
         }
