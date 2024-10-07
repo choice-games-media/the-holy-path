@@ -28,27 +28,32 @@ public class EnemyController : MonoBehaviour
     {
         CheckHit();
         Vector2 velocity = _rigidbody.velocity;
-        Vector2 scale = transform.localScale;
         _isGrounded = CheckGround();
-        _spriteRenderer.flipX = !mIsMovingLeft;
+        
         if (_isGrounded) // Prevents some weird sprite flip-flopping
         {
             if (mIsMovingLeft)
             {
                 velocity.x = -mSpeed;
-                scale.x = -1; // Flips the sprite
+                _spriteRenderer.flipX = false;
             }
             else
             {
                 velocity.x = mSpeed;
-                scale.x = 1;
+                _spriteRenderer.flipX = true;
             }
         }
 
-        CheckWalls(transform.position, scale.x);
+        if (_spriteRenderer.flipX)
+        {
+            CheckWalls(transform.position, -1);
+        }
+        else
+        {
+            CheckWalls(transform.position, 1);
+        }
 
         _rigidbody.velocity = velocity;
-        transform.localScale = scale;
     }
 
     private void OnDrawGizmos()
