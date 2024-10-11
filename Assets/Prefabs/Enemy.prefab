@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 916142344066258326}
   - component: {fileID: 916142344066258325}
   - component: {fileID: 916142344066258324}
-  - component: {fileID: 916142344066258283}
+  - component: {fileID: 5333645410005814538}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -134,7 +134,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!114 &916142344066258283
+--- !u!114 &5333645410005814538
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,14 +143,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 916142344066258282}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4742f64383c40c4692250d4a27daf09, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d6ece1cd8c81b2488841849c484bf08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mSpeed: 3
-  mIsMovingLeft: 1
-  tileMask:
-    serializedVersion: 2
-    m_Bits: 256
-  hitBoxSize: {x: 1, y: 1}
-  hitBoxPosition: {x: 0, y: 0}
-  wallCheckHitBoxSize: {x: 0.4, y: 0.75}
+  pointA: {fileID: 0}
+  pointB: {fileID: 0}
+  speed: 3
