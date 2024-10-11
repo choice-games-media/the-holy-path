@@ -2,112 +2,63 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public float mSpeed = 3;
-    public bool mIsMovingLeft = true;
-    public LayerMask tileMask;
+    public GameObject pointA;
+    public GameObject pointB;
+    private Rigidbody2D _rb;
+    private Transform _currentPoint;
+    public float speed;
     public Vector2 hitBoxSize;
     public Vector2 hitBoxPosition;
-    public Vector2 wallCheckHitBoxSize;
-    private Collider2D _collider;
-    private bool _isGrounded;
-    private Rigidbody2D _rigidbody;
-    private SpriteRenderer _spriteRenderer;
 
-    private void Awake()
+    // Start is called before the first frame update
+    void Start()
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-    }
-    
-    private void Start()
-    {
-        _rigidbody = GetComponent<Rigidbody2D>();
-        _collider = GetComponent<Collider2D>();
+        _rb = GetComponent<Rigidbody2D>();
+        _currentPoint = pointB.transform;
     }
 
-    private void Update()
+    // Update is called once per frame
+    void Update()
     {
         CheckHit();
-        Vector2 velocity = _rigidbody.velocity;
-        _isGrounded = CheckGround();
-        
-        if (_isGrounded) // Prevents some weird sprite flip-flopping
+        if (_currentPoint == pointB.transform)
         {
-            if (mIsMovingLeft)
-            {
-                velocity.x = -mSpeed;
-                _spriteRenderer.flipX = false;
-            }
-            else
-            {
-                velocity.x = mSpeed;
-                _spriteRenderer.flipX = true;
-            }
-        }
-
-        if (_spriteRenderer.flipX)
-        {
-            CheckWalls(transform.position, -1);
+            _rb.velocity = new Vector2(speed, 0);
         }
         else
         {
-            CheckWalls(transform.position, 1);
+            _rb.velocity = new Vector2(-speed, 0);
         }
 
-        _rigidbody.velocity = velocity;
+        if (Vector2.Distance(transform.position, _currentPoint.position) < 0.5f && _currentPoint == pointB.transform)
+        {
+            Flip();
+            _currentPoint = pointA.transform;
+        }
+
+        if (Vector2.Distance(transform.position, _currentPoint.position) < 0.5f && _currentPoint == pointA.transform)
+        {
+            Flip();
+            _currentPoint = pointB.transform;
+        }
+    }
+
+    private void Flip()
+    {
+        Vector3 localScale = transform.localScale;
+        localScale.x *= -1;
+        transform.localScale = localScale;
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(
-            transform.position + (Vector3)hitBoxPosition, // Position of the hit box
-            new Vector3( // Size of the hitbox
-                hitBoxSize.x + 0.1f,
-                hitBoxSize.y,
-                0) // The z-axis is irrelevant, so it's 0
-        );
-
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireCube(
-            new Vector2(
-                transform.position.x + transform.localScale.x * (hitBoxSize.x / 2),
-                transform.position.y
-            ),
-            wallCheckHitBoxSize
-        );
-    }
-
-    private bool CheckGround()
-    {
-        RaycastHit2D feetHotbox = Physics2D.CircleCast(
-            transform.position, // Where to check (the position of the enemy)
-            0.1f, // How big the check should be
-            Vector2.down, // Direction of the check
-            0.1f, // Distance of the check
-            tileMask // Only check certain layers
-        );
-
-        return feetHotbox.collider == null; // If the collider touches something, return true
-    }
-
-    private void CheckWalls(Vector3 position, float direction)
-    {
-        _collider.enabled = false;
-        Collider2D overlapBox = Physics2D.OverlapBox(
-            new Vector2(
-                position.x + direction * (hitBoxSize.x / 2),
-                position.y // Center of the hitbox in y-axis
-            ),
-            wallCheckHitBoxSize,
-            0,
-            tileMask
-        );
-        _collider.enabled = true;
+        Gizmos.DrawWireSphere(pointA.transform.position, 0.5f);
+        Gizmos.DrawWireSphere(pointB.transform.position, 0.5f);
+        Gizmos.DrawLine(pointA.transform.position, pointB.transform.position);
         
-        if (overlapBox != null && !overlapBox.CompareTag("Ground"))
-        {
-            mIsMovingLeft = !mIsMovingLeft;
-        }
+        Gizmos.color = Color.cyan;
+        Vector2 hitBoxCenter = (Vector2)transform.position + hitBoxPosition;
+        Gizmos.DrawWireCube(hitBoxCenter, new Vector3(hitBoxSize.x + 0.1f, hitBoxSize.y, 0));
     }
 
     private void CheckHit()

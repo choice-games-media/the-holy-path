@@ -8,7 +8,9 @@ public class PlayerHealth : MonoBehaviour
     
     public void TakeDamage(int amount)
     {
+        print($"{health}: Taking {amount} damage");
         health -= amount;
+        print(health);
         healthText.text = $"Lives: {health}";
     }
 }
