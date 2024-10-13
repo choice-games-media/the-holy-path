@@ -9,15 +9,17 @@ public class EnemyController : MonoBehaviour
     public float speed;
     public Vector2 hitBoxSize;
     public Vector2 hitBoxPosition;
-
-    // Start is called before the first frame update
+    
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
         _currentPoint = pointB.transform;
     }
-
-    // Update is called once per frame
+    
+    /// <startedBy> Jason </startedBy>
+    /// <summary>
+    /// Moves the enemy back and forth between two pre-assigned patrol points.
+    /// </summary>
     void Update()
     {
         CheckHit();
@@ -42,14 +44,22 @@ public class EnemyController : MonoBehaviour
             _currentPoint = pointB.transform;
         }
     }
-
+    
+    /// <startedBy> Jason </startedBy>
+    /// <summary>
+    /// Visually flips the enemy in the x-axis.
+    /// </summary>
     private void Flip()
     {
         Vector3 localScale = transform.localScale;
         localScale.x *= -1;
         transform.localScale = localScale;
     }
-
+    
+    /// <startedBy> Jason </startedBy>
+    /// <summary>
+    /// For development use - draws a visual hitbox for the patrol points and player collider.
+    /// </summary>
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(pointA.transform.position, 0.5f);
@@ -60,7 +70,11 @@ public class EnemyController : MonoBehaviour
         Vector2 hitBoxCenter = (Vector2)transform.position + hitBoxPosition;
         Gizmos.DrawWireCube(hitBoxCenter, new Vector3(hitBoxSize.x + 0.1f, hitBoxSize.y, 0));
     }
-
+    
+    /// <startedBy> Jason </startedBy>
+    /// <summary>
+    /// Detects all collided objects and handles behaviours like destroying the enemy and player.
+    /// </summary>
     private void CheckHit()
     {
         // https://rider-support.jetbrains.com/hc/en-us/community/posts/11634372238098-NonAlloc-in-Unity-is-either-deprecated-or-ineffective
@@ -89,7 +103,8 @@ public class EnemyController : MonoBehaviour
                         return;
                     }
                 }
-
+                
+                // If the enemy regularly collides with the player
                 PlayerHealth playerHealth = collided.GetComponent<PlayerHealth>();
                 if (playerHealth != null)
                 {

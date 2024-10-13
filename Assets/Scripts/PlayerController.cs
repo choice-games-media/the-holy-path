@@ -16,7 +16,11 @@ public class PlayerController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _characterSpriteRender = GetComponent<SpriteRenderer>();
     }
-
+    
+    /// <startedBy> Adam </startedBy>
+    /// <summary>
+    /// Checks for valid movement keys and flips the player based on the direction they are facing.
+    /// </summary>
     private void Update()
     {
         _moveInput = Input.GetAxis("Horizontal");
@@ -31,7 +35,11 @@ public class PlayerController : MonoBehaviour
             _characterSpriteRender.flipX = true;
         }
     }
-
+    
+    /// <startedBy> Adam </startedBy>
+    /// <summary>
+    /// Allows the player to jump based on their movement and jump speed, if and only if they are touching the ground.
+    /// </summary>
     private void FixedUpdate()
     {
         Vector2 vel = _rb.velocity; // .velocity returns a temporary variable, so we can't directly set its value
@@ -44,12 +52,21 @@ public class PlayerController : MonoBehaviour
 
         _rb.velocity = vel;
     }
-
+    
+    /// <startedBy> Adam </startedBy>
+    /// <summary>
+    /// For development use - displays the hitbox of the ground check.
+    /// </summary>
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(transform.position, groundRadiusCheck);
     }
-
+    
+    /// <startedBy> Adam </startedBy>
+    /// <summary>
+    /// Checks in a circle under the player if an object tagged Ground is collided with.
+    /// </summary>
+    /// <returns>Whether the player is touching the ground.</returns>
     private bool GroundCheck()
     {
         Collider2D hitCollider = Physics2D.OverlapCircle(
