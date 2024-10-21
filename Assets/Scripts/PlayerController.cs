@@ -29,11 +29,11 @@ public class PlayerController : MonoBehaviour
 
         if (_moveInput < 0)
         {
-            _characterSpriteRender.flipX = false;
+            _characterSpriteRender.flipX = true;
         }
         else if (_moveInput > 0)
         {
-            _characterSpriteRender.flipX = true;
+            _characterSpriteRender.flipX = false;
         }
     }
     
