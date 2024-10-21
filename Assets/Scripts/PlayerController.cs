@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     private bool _jumpInput;
     private float _moveInput;
     private Rigidbody2D _rb;
+    public AudioClip jumpSound;
 
     private void Awake()
     {
@@ -47,6 +48,8 @@ public class PlayerController : MonoBehaviour
         bool onGround = GroundCheck();
         if (_jumpInput && onGround)
         {
+            AudioManager audioManager = FindObjectOfType<AudioManager>();
+            audioManager.PlaySound(jumpSound);
             vel.y = jumpSpeed;
         }
 
