@@ -153,6 +153,7 @@ MonoBehaviour:
   layers:
     serializedVersion: 2
     m_Bits: 256
+  jumpSound: {fileID: 8300000, guid: 7fc8a50a9bc8ca54d8c8b6528df4f371, type: 3}
 --- !u!114 &7402224813544132140
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,4 +168,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startingLives: 3
   healthText: {fileID: 0}
-  respawnPoint: {fileID: 0}
