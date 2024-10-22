@@ -2,106 +2,80 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public float mSpeed = 3;
-    public bool mIsMovingLeft = true;
-    private Rigidbody2D _rigidbody;
-    public LayerMask tileMask;
-    private bool _isGrounded;
+    public GameObject pointA;
+    public GameObject pointB;
+    private Rigidbody2D _rb;
+    private Transform _currentPoint;
+    public float speed;
     public Vector2 hitBoxSize;
     public Vector2 hitBoxPosition;
-    public Vector2 wallCheckHitBoxSize;
-    private Collider2D _collider;
     
     void Start()
     {
-        _rigidbody = GetComponent<Rigidbody2D>();
-        _collider = GetComponent<Collider2D>();
+        _rb = GetComponent<Rigidbody2D>();
+        _currentPoint = pointB.transform;
     }
-
+    
+    /// <startedBy> Jason </startedBy>
+    /// <summary>
+    /// Moves the enemy back and forth between two pre-assigned patrol points.
+    /// </summary>
     void Update()
     {
         CheckHit();
-        Vector2 velocity = _rigidbody.velocity;
-        Vector2 scale = transform.localScale;
-        _isGrounded = CheckGround();
-
-        if (_isGrounded)  // Prevents some weird sprite flip-flopping
+        if (_currentPoint == pointB.transform)
         {
-            if (mIsMovingLeft)
-            {
-                velocity.x = -mSpeed;
-                scale.x = -1;  // Flips the sprite
-            }
-            else
-            {
-                velocity.x = mSpeed;
-                scale.x = 1;
-            }
+            _rb.velocity = new Vector2(speed, 0);
         }
-        CheckWalls(transform.position, scale.x);
-        
-        _rigidbody.velocity = velocity;
-        transform.localScale = scale;
-    }
+        else
+        {
+            _rb.velocity = new Vector2(-speed, 0);
+        }
 
-    bool CheckGround()
+        if (Vector2.Distance(transform.position, _currentPoint.position) < 0.5f && _currentPoint == pointB.transform)
+        {
+            Flip();
+            _currentPoint = pointA.transform;
+        }
+
+        if (Vector2.Distance(transform.position, _currentPoint.position) < 0.5f && _currentPoint == pointA.transform)
+        {
+            Flip();
+            _currentPoint = pointB.transform;
+        }
+    }
+    
+    /// <startedBy> Jason </startedBy>
+    /// <summary>
+    /// Visually flips the enemy in the x-axis.
+    /// </summary>
+    private void Flip()
     {
-        RaycastHit2D feetHotbox = Physics2D.CircleCast(
-            transform.position,  // Where to check (the position of the enemy)
-            0.1f,  // How big the check should be
-            Vector2.down,  // Direction of the check
-            0.1f,  // Distance of the check
-            tileMask  // Only check certain layers
-        );
-
-        return feetHotbox.collider != null;  // If the collider touches something, return true
+        Vector3 localScale = transform.localScale;
+        localScale.x *= -1;
+        transform.localScale = localScale;
     }
-
+    
+    /// <startedBy> Jason </startedBy>
+    /// <summary>
+    /// For development use - draws a visual hitbox for the patrol points and player collider.
+    /// </summary>
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(
-            transform.position + (Vector3)hitBoxPosition,  // Position of the hitbox
-            new Vector3(  // Size of the hitbox
-                hitBoxSize.x + 0.1f,
-                hitBoxSize.y,
-                0  // The z-axis is irrelevant, so it's 0
-            )
-        );
-
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireCube(
-            new Vector2(
-                transform.position.x + transform.localScale.x * (hitBoxSize.x / 2), 
-                transform.position.y + hitBoxSize.x / 2
-            ),
-            wallCheckHitBoxSize
-        );
-    }
-
-    void CheckWalls(Vector3 position, float direction)
-    {
-        _collider.enabled = false;
-        Collider2D overlapBox = Physics2D.OverlapBox(
-            new Vector2(
-                position.x + direction * (hitBoxSize.x / 2),
-                position.y + hitBoxSize.y / 2
-            ),
-            wallCheckHitBoxSize,
-            0,
-            tileMask
-        );
-        _collider.enabled = true;
+        Gizmos.DrawWireSphere(pointA.transform.position, 0.5f);
+        Gizmos.DrawWireSphere(pointB.transform.position, 0.5f);
+        Gizmos.DrawLine(pointA.transform.position, pointB.transform.position);
         
-        // | stands for logical or, which is something completely different from conditional or
-        if (overlapBox != null || overlapBox.name != "Ground")
-        {
-            print(overlapBox.name);
-            mIsMovingLeft = !mIsMovingLeft;
-        }
+        Gizmos.color = Color.cyan;
+        Vector2 hitBoxCenter = (Vector2)transform.position + hitBoxPosition;
+        Gizmos.DrawWireCube(hitBoxCenter, new Vector3(hitBoxSize.x + 0.1f, hitBoxSize.y, 0));
     }
-
-    void CheckHit()
+    
+    /// <startedBy> Jason </startedBy>
+    /// <summary>
+    /// Detects all collided objects and handles behaviours like destroying the enemy and player.
+    /// </summary>
+    private void CheckHit()
     {
         // https://rider-support.jetbrains.com/hc/en-us/community/posts/11634372238098-NonAlloc-in-Unity-is-either-deprecated-or-ineffective
         // ReSharper disable once Unity.PreferNonAllocApi
@@ -117,26 +91,24 @@ public class EnemyController : MonoBehaviour
 
         foreach (Collider2D collided in colliders)
         {
-            if (collided != null)
+            if (collided.CompareTag("Player"))
             {
-                if (collided.CompareTag("Player"))
+                Rigidbody2D collidedRb = collided.GetComponent<Rigidbody2D>();
+                if (collidedRb != null)
                 {
-                    Rigidbody2D collidedRb = collided.GetComponent<Rigidbody2D>();
-                    if (collidedRb != null)
+                    // If the player is falling
+                    if (collidedRb.velocity.y < -0.2f)
                     {
-                        // If the player is falling
-                        if (collidedRb.velocity.y < -0.2f)
-                        {
-                            Destroy(gameObject);
-                            return;
-                        }
+                        Destroy(gameObject);
+                        return;
                     }
-                    
-                    PlayerHealth playerHealth = collided.GetComponent<PlayerHealth>();
-                    if (playerHealth != null)
-                    {
-                        playerHealth.TakeDamage(50);
-                    }
+                }
+                
+                // If the enemy regularly collides with the player
+                PlayerHealth playerHealth = collided.GetComponent<PlayerHealth>();
+                if (playerHealth != null)
+                {
+                    playerHealth.TakeDamage(1);
                 }
             }
         }
