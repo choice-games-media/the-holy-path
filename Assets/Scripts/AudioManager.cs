@@ -31,11 +31,9 @@ public class AudioManager : MonoBehaviour
         switch (currentScene)
         {
             case "MainMenu":
-                print("Main menu!");
                 PlayMusic(menuMusic);
                 break;
             default:
-                print("Levels!");
                 PlayMusic(levelMusic);
                 break;
         }
